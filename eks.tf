@@ -55,11 +55,11 @@ resource "aws_launch_template" "eks_worker_launch_template" {
   name                 = "eks-worker-launch-template"
   image_id             = data.aws_ami.latest_eks_ami.id
   instance_type        = "t2.micro"
-  security_group_names = [ aws_security_group.eks_sg.id ]
-   iam_instance_profile {
+  security_group_names = [aws_security_group.eks_sg.id]
+  iam_instance_profile {
     name = aws_iam_instance_profile.eks_worker_profile.name
   }
-  user_data            = file("userdata.sh")
+  user_data = file("userdata.sh")
 }
 
 resource "aws_iam_instance_profile" "eks_worker_profile" {
@@ -68,11 +68,11 @@ resource "aws_iam_instance_profile" "eks_worker_profile" {
 }
 
 resource "aws_autoscaling_group" "eks_worker_asg" {
-  desired_capacity     = 2
-  max_size             = 3
-  min_size             = 1
-  vpc_zone_identifier  = [aws_subnet.private_subnet1.id, aws_subnet.private_subnet2.id]
-    launch_template {
+  desired_capacity    = 2
+  max_size            = 3
+  min_size            = 1
+  vpc_zone_identifier = [aws_subnet.private_subnet1.id, aws_subnet.private_subnet2.id]
+  launch_template {
     id      = aws_launch_template.eks_worker_launch_template.id
     version = "$Latest"
   }
